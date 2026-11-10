@@ -120,7 +120,10 @@ jobs:
 
       - name: Import distribution certificate into temporary keychain
         env:
-          DIST_CERT_P12_BASE64: ${{ secrets.DIST_CERT_P12_BASE64 }}
+          DIST_CERT_P12_B64_1: ${{ secrets.DIST_CERT_P12_B64_1 }}
+          DIST_CERT_P12_B64_2: ${{ secrets.DIST_CERT_P12_B64_2 }}
+          DIST_CERT_P12_B64_3: ${{ secrets.DIST_CERT_P12_B64_3 }}
+          DIST_CERT_P12_B64_4: ${{ secrets.DIST_CERT_P12_B64_4 }}
           DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
         run: |
           set -euo pipefail
@@ -133,7 +136,12 @@ jobs:
           echo "::add-mask::$KEYCHAIN_PASSWORD"
           echo "KEYCHAIN_PASSWORD=$KEYCHAIN_PASSWORD" >> "$GITHUB_ENV"
 
-          printf '%s' "$DIST_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+          printf '%s' "$DIST_CERT_P12_B64_1" | base64 --decode > "$RUNNER_TEMP/cert_part_1"
+          printf '%s' "$DIST_CERT_P12_B64_2" | base64 --decode > "$RUNNER_TEMP/cert_part_2"
+          printf '%s' "$DIST_CERT_P12_B64_3" | base64 --decode > "$RUNNER_TEMP/cert_part_3"
+          printf '%s' "$DIST_CERT_P12_B64_4" | base64 --decode > "$RUNNER_TEMP/cert_part_4"
+          for p in 1 2 3 4; do echo "part $p sha256: $(shasum -a 256 "$RUNNER_TEMP/cert_part_$p" | awk '{print $1}')"; done
+          cat "$RUNNER_TEMP/cert_part_1" "$RUNNER_TEMP/cert_part_2" "$RUNNER_TEMP/cert_part_3" "$RUNNER_TEMP/cert_part_4" > "$CERT_PATH"
 
           EXPECTED_BYTES=3093
           ACTUAL_BYTES="$(wc -c < "$CERT_PATH" | tr -d ' ')"
@@ -142,9 +150,13 @@ jobs:
             echo "::error::Stored certificate value is bad: decoded $ACTUAL_BYTES bytes, expected $EXPECTED_BYTES"
             exit 1
           fi
-                    echo "Decoded certificate sha256: $(shasum -a 256 "$CERT_PATH" | awk '{print $1}')"
-          echo "Stored password length: ${#DIST_CERT_PASSWORD}"
-          openssl pkcs12 -legacy -provider default -provider legacy -in "$CERT_PATH" -noout -passin env:DIST_CERT_PASSWORD || echo "Diagnostic: legacy parse error printed above"
+                    EXPECTED_SHA256="2e91e585f5cb9377d0bce82ca633d49d8ae42770e76b36670f7a3105ed88397e"
+          ACTUAL_SHA256="$(shasum -a 256 "$CERT_PATH" | awk '{print $1}')"
+          echo "Decoded certificate sha256: $ACTUAL_SHA256"
+          if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
+            echo "::error::Decoded certificate hash mismatch"
+            exit 1
+          fi
           export DIST_CERT_PASSWORD
           if openssl pkcs12 -in "$CERT_PATH" -noout -passin env:DIST_CERT_PASSWORD >/dev/null 2>&1; then
             echo "openssl parse: ok (plain)"
