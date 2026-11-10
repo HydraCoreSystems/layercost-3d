@@ -1,0 +1,66 @@
+{
+  "expo": {
+    "android": {
+      "package": "com.layercost3d.app",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "ios": {
+      "buildNumber": "1",
+      "bundleIdentifier": "com.layercost3d.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Scan your 3D slicer screen to automatically import filament grams, purge waste, and print time.",
+        "NSPhotoLibraryUsageDescription": "Import screenshots of your 3D slicer preview to calculate print costs.",
+        "UISupportsDocumentBrowser": true
+      },
+      "supportsTablet": true
+    },
+    "name": "LayerCost 3D",
+    "orientation": "portrait",
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Scan your 3D slicer screen to automatically import filament grams, purge waste, and print time.",
+          "microphonePermission": false,
+          "photosPermission": "Import screenshots of your 3D slicer preview to calculate print costs."
+        }
+      ],
+      "expo-iap",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "backgroundColor": "#090D16",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "scheme": "layercost",
+    "slug": "layercost-3d",
+    "userInterfaceStyle": "dark",
+    "version": "1.0.0",
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "icon": "./assets/icon.png",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "2efa007b-da88-4b8a-8fad-31dd800dded3"
+      }
+    },
+    "owner": "gatheringmossphils-team"
+  }
+}
