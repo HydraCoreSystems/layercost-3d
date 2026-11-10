@@ -124,6 +124,8 @@ jobs:
           DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
         run: |
           set -euo pipefail
+          export PATH="$(brew --prefix openssl@3)/bin:$PATH"
+                   openssl version
           KEYCHAIN_PATH="$RUNNER_TEMP/layercost-signing.keychain-db"
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           CERT_PATH="$RUNNER_TEMP/dist_cert.p12"
