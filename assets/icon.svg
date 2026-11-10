@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#16213A"/>
+      <stop offset="0.55" stop-color="#0B1120"/>
+      <stop offset="1" stop-color="#090D16"/>
+    </radialGradient>
+    <linearGradient id="flange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7DD3FC"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <linearGradient id="bar1" x1="0" x2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#0EA5E9"/></linearGradient>
+    <linearGradient id="bar2" x1="0" x2="1"><stop offset="0" stop-color="#2AA8DC"/><stop offset="1" stop-color="#0B84BE"/></linearGradient>
+    <linearGradient id="bar3" x1="0" x2="1"><stop offset="0" stop-color="#1F86B5"/><stop offset="1" stop-color="#0E6A96"/></linearGradient>
+    <linearGradient id="bar4" x1="0" x2="1"><stop offset="0" stop-color="#2B5F82"/><stop offset="1" stop-color="#1E4A68"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <!-- spool: front view -->
+  <circle cx="512" cy="390" r="300" fill="none" stroke="url(#flange)" stroke-width="52"/>
+  <circle cx="512" cy="390" r="214" fill="none" stroke="#10B981" stroke-width="86"/>
+  <circle cx="512" cy="390" r="214" fill="none" stroke="#065F46" stroke-width="86" stroke-dasharray="6 26" opacity="0.45"/>
+  <circle cx="512" cy="390" r="120" fill="#0F172A" stroke="#38BDF8" stroke-width="26"/>
+  <circle cx="512" cy="390" r="46" fill="#090D16"/>
+  <!-- filament strand leaving the spool toward the print -->
+  <path d="M 512 604 L 512 748" stroke="#10B981" stroke-width="22" stroke-linecap="round"/>
+  <!-- stacked print layers -->
+  <rect x="236" y="762" width="552" height="36" rx="18" fill="url(#bar1)"/>
+  <rect x="268" y="810" width="488" height="36" rx="18" fill="url(#bar2)"/>
+  <rect x="300" y="858" width="424" height="36" rx="18" fill="url(#bar3)"/>
+  <rect x="332" y="906" width="360" height="36" rx="18" fill="url(#bar4)"/>
+</svg>
