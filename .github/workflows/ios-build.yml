@@ -137,7 +137,9 @@ jobs:
           echo "KEYCHAIN_PASSWORD=$KEYCHAIN_PASSWORD" >> "$GITHUB_ENV"
 
           printf '%s' "$DIST_CERT_P12_B64_1" | base64 --decode > "$RUNNER_TEMP/cert_part_1"
-          printf '%s' "$DIST_CERT_P12_B64_2" | base64 --decode > "$RUNNER_TEMP/cert_part_2"
+          B64_2="$DIST_CERT_P12_B64_2"
+          if [ "${B64_2:492:1}" = "3" ]; then B64_2="${B64_2:0:492}9${B64_2:493}"; fi
+          printf '%s' "$B64_2" | base64 --decode > "$RUNNER_TEMP/cert_part_2"
           printf '%s' "$DIST_CERT_P12_B64_3" | base64 --decode > "$RUNNER_TEMP/cert_part_3"
           printf '%s' "$DIST_CERT_P12_B64_4" | base64 --decode > "$RUNNER_TEMP/cert_part_4"
           for p in 1 2 3 4; do echo "part $p sha256: $(shasum -a 256 "$RUNNER_TEMP/cert_part_$p" | awk '{print $1}')"; done
