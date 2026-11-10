@@ -142,6 +142,9 @@ jobs:
             echo "::error::Stored certificate value is bad: decoded $ACTUAL_BYTES bytes, expected $EXPECTED_BYTES"
             exit 1
           fi
+                    echo "Decoded certificate sha256: $(shasum -a 256 "$CERT_PATH" | awk '{print $1}')"
+          echo "Stored password length: ${#DIST_CERT_PASSWORD}"
+          openssl pkcs12 -legacy -provider default -provider legacy -in "$CERT_PATH" -noout -passin env:DIST_CERT_PASSWORD || echo "Diagnostic: legacy parse error printed above"
           export DIST_CERT_PASSWORD
           if openssl pkcs12 -in "$CERT_PATH" -noout -passin env:DIST_CERT_PASSWORD >/dev/null 2>&1; then
             echo "openssl parse: ok (plain)"
