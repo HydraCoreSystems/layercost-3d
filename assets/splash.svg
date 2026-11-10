@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="flange" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7DD3FC"/><stop offset="1" stop-color="#0EA5E9"/></linearGradient>
+    <linearGradient id="bar1" x1="0" x2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#0EA5E9"/></linearGradient>
+    <linearGradient id="bar2" x1="0" x2="1"><stop offset="0" stop-color="#2AA8DC"/><stop offset="1" stop-color="#0B84BE"/></linearGradient>
+    <linearGradient id="bar3" x1="0" x2="1"><stop offset="0" stop-color="#1F86B5"/><stop offset="1" stop-color="#0E6A96"/></linearGradient>
+    <linearGradient id="bar4" x1="0" x2="1"><stop offset="0" stop-color="#2B5F82"/><stop offset="1" stop-color="#1E4A68"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="#090D16"/>
+  <g transform="translate(512 0) scale(0.62) translate(-512 0) translate(0 70)">
+    <circle cx="512" cy="390" r="300" fill="none" stroke="url(#flange)" stroke-width="52"/>
+    <circle cx="512" cy="390" r="214" fill="none" stroke="#10B981" stroke-width="86"/>
+    <circle cx="512" cy="390" r="214" fill="none" stroke="#065F46" stroke-width="86" stroke-dasharray="6 26" opacity="0.45"/>
+    <circle cx="512" cy="390" r="120" fill="#0F172A" stroke="#38BDF8" stroke-width="26"/>
+    <circle cx="512" cy="390" r="46" fill="#090D16"/>
+    <path d="M 512 604 L 512 748" stroke="#10B981" stroke-width="22" stroke-linecap="round"/>
+    <rect x="236" y="762" width="552" height="36" rx="18" fill="url(#bar1)"/>
+    <rect x="268" y="810" width="488" height="36" rx="18" fill="url(#bar2)"/>
+    <rect x="300" y="858" width="424" height="36" rx="18" fill="url(#bar3)"/>
+    <rect x="332" y="906" width="360" height="36" rx="18" fill="url(#bar4)"/>
+  </g>
+  <text x="512" y="840" text-anchor="middle" font-family="Inter, DejaVu Sans, sans-serif" font-weight="800" font-size="84" letter-spacing="2" fill="#E2E8F0">LayerCost <tspan fill="#38BDF8">3D</tspan></text>
+  <text x="512" y="902" text-anchor="middle" font-family="Inter, DejaVu Sans, sans-serif" font-weight="600" font-size="34" letter-spacing="7" fill="#64748B">PRINT COST STUDIO</text>
+</svg>
