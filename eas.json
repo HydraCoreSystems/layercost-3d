@@ -1,0 +1,35 @@
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "credentialsSource": "local"
+    }
+  },
+  "cli": {
+    "appVersionSource": "remote",
+    "version": ">= 12.0.0"
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascApiKeyPath": "credentials/AuthKey_A6XNLBA4VZ.p8",
+        "ascApiKeyId": "A6XNLBA4VZ",
+        "ascApiKeyIssuerId": "b8a46334-3678-481c-8b85-56a64a0d390a",
+        "ascAppId": "6832249451"
+      }
+    }
+  }
+}
