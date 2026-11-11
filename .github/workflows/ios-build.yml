@@ -275,10 +275,18 @@ jobs:
           subprocess.run(["plutil", "-convert", "xml1", proj], check=True)
           data = plistlib.load(open(proj, "rb"))
           objects = data["objects"]
-          apps = [o for o in objects.values() if isinstance(o, dict) and o.get("isa") == "PBXNativeTarget" and o.get("productType") == "com.apple.product-type.application"]
-          if not apps: sys.exit("app target not found")
-          ids = objects[apps[0]["buildConfigurationList"]["buildConfigurations"]]
-          for cid in ids: objects[cid].setdefault("buildSettings", {}).update({"PROVISIONING_PROFILE_SPECIFIER": os.environ["PROFILE_NAME"], "CODE_SIGN_STYLE": "Manual"})
+          bundle = os.environ["BUNDLE_ID"]
+          seen = [o.get("buildSettings", {}).get("PRODUCT_BUNDLE_IDENTIFIER") for o in objects.values() if isinstance(o, dict) and o.get("isa") == "XCBuildConfiguration")]
+          print("bundle identifiers seen:", seen)
+          hits = 0
+          for obj in objects.values():
+              bs = obj.get("buildSettings", {})
+              if isinstance(bs, dict) and bs.get("PRODUCT_BUNDLE_IDENTIFIER") == bundle:
+                  bs["PROVISIONING_PROFILE_SPECIFIER"] = os.environ["PROFILE_NAME"]
+                  bs["CODE_SIGN_STYLE"] = "Manual"
+                  hits += 1
+          print("patched configurations:", hits)
+          if hits == 0: sys.exit("no app configuration found")
           plistlib.dump(data, open(proj, "wb"), fmt=plistlib.FMT_XML)
           print("Provisioning profile set on the app target only")
           PY
