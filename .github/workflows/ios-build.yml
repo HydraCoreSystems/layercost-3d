@@ -254,7 +254,6 @@ jobs:
             echo "Installed profile is named '$ACTUAL_NAME', expected '$PROFILE_NAME'" >&2
             exit 1
           fi
-            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}" \
             if [ -z "$TEAM_ID" ]; then
             echo "Could not read team ID from provisioning profile" >&2
             exit 1
