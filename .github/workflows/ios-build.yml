@@ -276,7 +276,7 @@ jobs:
           data = plistlib.load(open(proj, "rb"))
           objects = data["objects"]
           bundle = os.environ["BUNDLE_ID"]
-          seen = [o.get("buildSettings", {}).get("PRODUCT_BUNDLE_IDENTIFIER") for o in objects.values() if isinstance(o, dict) and o.get("isa") == "XCBuildConfiguration")]
+          seen = [o.get("buildSettings", {}).get("PRODUCT_BUNDLE_IDENTIFIER") for o in objects.values() if isinstance(o, dict) and o.get("isa") == "XCBuildConfiguration"]
           print("bundle identifiers seen:", seen)
           hits = 0
           for obj in objects.values():
