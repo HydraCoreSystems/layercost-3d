@@ -254,7 +254,8 @@ jobs:
             echo "Installed profile is named '$ACTUAL_NAME', expected '$PROFILE_NAME'" >&2
             exit 1
           fi
-          if [ -z "$TEAM_ID" ]; then
+            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}" \
+            if [ -z "$TEAM_ID" ]; then
             echo "Could not read team ID from provisioning profile" >&2
             exit 1
           fi
@@ -266,6 +267,22 @@ jobs:
           rm -f "$PROFILE_PATH" "$PROFILE_PLIST"
           echo "Installed profile: $ACTUAL_NAME"
 
+      - name: Set provisioning profile on the app target only
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import subprocess, plistlib, glob, os, sys
+          proj = glob.glob("ios/*.xcodeproj/project.pbxproj")[0]
+          subprocess.run(["plutil", "-convert", "xml1", proj], check=True)
+          data = plistlib.load(open(proj, "rb"))
+          objects = data["objects"]
+          apps = [o for o in objects.values() if isinstance(o, dict) and o.get("isa") == "PBXNativeTarget" and o.get("productType") == "com.apple.product-type.application"]
+          if not apps: sys.exit("app target not found")
+          ids = objects[apps[0]["buildConfigurationList"]["buildConfigurations"]]
+          for cid in ids: objects[cid].setdefault("buildSettings", {}).update({"PROVISIONING_PROFILE_SPECIFIER": os.environ["PROFILE_NAME"], "CODE_SIGN_STYLE": "Manual"})
+          plistlib.dump(data, open(proj, "wb"), fmt=plistlib.FMT_XML)
+          print("Provisioning profile set on the app target only")
+          PY
       - name: Archive
         run: |
           set -euo pipefail
@@ -281,7 +298,6 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
             SWIFT_STRICT_CONCURRENCY=minimal \
             SWIFT_VERSION=5 \
