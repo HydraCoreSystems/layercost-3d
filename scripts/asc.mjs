@@ -14,7 +14,7 @@ import fs from "node:fs";
 const { ASC_KEY_FILE, ASC_KEY_ID, ASC_ISSUER_ID, BUNDLE_ID, SUBMISSION_ID, VERSION_STRING } = process.env;
 let { APP_ID } = process.env;
 const [action, buildNumber] = process.argv.slice(2);
-if (!["status", "attach", "testflight", "resubmit", "submissions", "probe", "products", "submit", "links", "group"].includes(action) || !/^\d+$/.test(buildNumber ?? "")) {
+if (!["status", "attach", "testflight", "resubmit", "submissions", "probe", "products", "submit", "links", "group", "who"].includes(action) || !/^\d+$/.test(buildNumber ?? "")) {
   console.error("usage: asc.mjs status|attach|testflight <build number>");
   process.exit(2);
 }
@@ -182,6 +182,13 @@ if (action === "status") {
   await api("POST", `/v1/betaGroups/${g.id}/relationships/betaTesters`, { data: [{ type: "betaTesters", id: t.data[0].id }] });
   console.log(`Added tester ${t.data[0].attributes.firstName} ${t.data[0].attributes.lastName ?? ""} to "${name}"`);
   await report(buildNumber);
+} else if (action === "who") {
+  // Read only: team users named Crystal, their roles and which apps they can see (no emails).
+  const u = await api("GET", "/v1/users?limit=200&fields[users]=firstName,lastName,roles,allAppsVisible&include=visibleApps&fields[apps]=name");
+  for (const x of u.data.filter((x) => x.attributes.firstName === "Crystal")) {
+    const apps = (x.relationships?.visibleApps?.data ?? []).map((a) => (u.included ?? []).find((i) => i.id === a.id)?.attributes.name ?? a.id);
+    console.log(`User ${x.id} ${x.attributes.firstName} ${x.attributes.lastName}: roles ${x.attributes.roles.join(",")}, all apps ${x.attributes.allAppsVisible}, apps [${apps.join(", ")}]`);
+  }
 } else if (action === "links") {
   // Read only: what the product records link to, to find where a product's pending version lives.
   for (const path of ["/v2/inAppPurchases/6832279552/versions", "/v1/subscriptions/6832271338/versions", "/v1/subscriptions/6832270954/versions", "/v1/subscriptionGroups/22558616/versions"]) {
