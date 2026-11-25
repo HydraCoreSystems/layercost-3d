@@ -176,8 +176,9 @@ if (action === "status") {
     console.log(`Created internal group "${name}" (all builds)`);
   } else console.log(`Group "${name}" already exists`);
   // Internal testers are team users already known to TestFlight; match by first name and add by id (no email in the log).
-  const t = await api("GET", "/v1/betaTesters?filter[firstName]=Crystal&limit=10&fields[betaTesters]=firstName,lastName");
-  if (t.data.length !== 1) throw new Error(`expected one tester named Crystal, found ${t.data.length}; group left without her`);
+  // Two team testers are named Crystal; take the one testing CramJam (app 6832270240), who checked its build 3.
+  const t = await api("GET", "/v1/betaTesters?filter[firstName]=Crystal&filter[apps]=6832270240&limit=10&fields[betaTesters]=firstName,lastName");
+  if (t.data.length !== 1) throw new Error(`expected one CramJam tester named Crystal, found ${t.data.length}; group left without her`);
   await api("POST", `/v1/betaGroups/${g.id}/relationships/betaTesters`, { data: [{ type: "betaTesters", id: t.data[0].id }] });
   console.log(`Added tester ${t.data[0].attributes.firstName} ${t.data[0].attributes.lastName ?? ""} to "${name}"`);
   await report(buildNumber);
