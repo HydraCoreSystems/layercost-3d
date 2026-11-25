@@ -23,7 +23,7 @@ permissions:
 
 env:
   BUNDLE_ID: com.layercost3d.app
-  SUBMISSION_ID: ""
+  SUBMISSION_ID: a8518bcb-1415-4233-8f97-bce1212b2aac
   VERSION_STRING: 1.0.0
 
 jobs:
