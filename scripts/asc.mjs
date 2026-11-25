@@ -4,6 +4,7 @@
 //   node scripts/asc.mjs attach     <build>   put <build> on version 1.0 in place of the current build
 //   node scripts/asc.mjs testflight <build>   put <build> in every internal TestFlight group that has the build it replaces
 //   node scripts/asc.mjs resubmit   <build>   cancel the waiting review submission, put <build> on the version, submit again
+//   node scripts/asc.mjs group      <build>   make the internal TestFlight group "LayerCost Test" (all builds) and add the team tester named Crystal
 //   node scripts/asc.mjs submit     <build>   put <build> on the version and send it with the app's ready products in a new submission
 //
 // Env: ASC_KEY_FILE, ASC_KEY_ID, ASC_ISSUER_ID, BUNDLE_ID (or APP_ID), SUBMISSION_ID, VERSION_STRING.
@@ -13,7 +14,7 @@ import fs from "node:fs";
 const { ASC_KEY_FILE, ASC_KEY_ID, ASC_ISSUER_ID, BUNDLE_ID, SUBMISSION_ID, VERSION_STRING } = process.env;
 let { APP_ID } = process.env;
 const [action, buildNumber] = process.argv.slice(2);
-if (!["status", "attach", "testflight", "resubmit", "submissions", "probe", "products", "submit", "links"].includes(action) || !/^\d+$/.test(buildNumber ?? "")) {
+if (!["status", "attach", "testflight", "resubmit", "submissions", "probe", "products", "submit", "links", "group"].includes(action) || !/^\d+$/.test(buildNumber ?? "")) {
   console.error("usage: asc.mjs status|attach|testflight <build number>");
   process.exit(2);
 }
@@ -165,6 +166,21 @@ if (action === "status") {
   console.log(`Submitted ${subId}: state ${sent.data.attributes.state}, submitted ${sent.data.attributes.submittedDate}`);
   const final = await version();
   console.log(`Store version ${final.name}: state ${final.state}, attached build ${final.buildNumber}`);
+} else if (action === "group") {
+  const name = "LayerCost Test";
+  let g = (await groups()).find((x) => x.name === name);
+  if (!g) {
+    const r = await api("POST", "/v1/betaGroups", { data: { type: "betaGroups", attributes: { name, isInternalGroup: true, hasAccessToAllBuilds: true },
+      relationships: { app: { data: { type: "apps", id: APP_ID } } } } });
+    g = { id: r.data.id };
+    console.log(`Created internal group "${name}" (all builds)`);
+  } else console.log(`Group "${name}" already exists`);
+  // Internal testers are team users already known to TestFlight; match by first name and add by id (no email in the log).
+  const t = await api("GET", "/v1/betaTesters?filter[firstName]=Crystal&limit=10&fields[betaTesters]=firstName,lastName");
+  if (t.data.length !== 1) throw new Error(`expected one tester named Crystal, found ${t.data.length}; group left without her`);
+  await api("POST", `/v1/betaGroups/${g.id}/relationships/betaTesters`, { data: [{ type: "betaTesters", id: t.data[0].id }] });
+  console.log(`Added tester ${t.data[0].attributes.firstName} ${t.data[0].attributes.lastName ?? ""} to "${name}"`);
+  await report(buildNumber);
 } else if (action === "links") {
   // Read only: what the product records link to, to find where a product's pending version lives.
   for (const path of ["/v2/inAppPurchases/6832279552/versions", "/v1/subscriptions/6832271338/versions", "/v1/subscriptions/6832270954/versions", "/v1/subscriptionGroups/22558616/versions"]) {
