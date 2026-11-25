@@ -7,7 +7,7 @@
       ]
     },
     "ios": {
-      "buildNumber": "1",
+      "buildNumber": "5",
       "bundleIdentifier": "com.layercost3d.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
